@@ -3,18 +3,31 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="author" content="Imran">
 <title>Tech News · Tech Khobor</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+Bengali:wght@600;700&family=Hind+Siliguri:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
   :root {
-    --bg: #16181d;
-    --surface: #1d2027;
-    --text: #e8e6e1;
-    --muted: #8a8f99;
-    --line: #2a2e37;
-    --accent: #f2b84b;
+    --bg: #0c1220;
+    --surface: #131b2c;
+    --text: #eceae4;
+    --muted: #8d97ab;
+    --rule: #242e44;
+    --accent: #ffb547;
+    --accent-ink: #0c1220;
+  }
+  @media (prefers-color-scheme: light) {
+    :root {
+      --bg: #f6f4ef;
+      --surface: #ffffff;
+      --text: #151a26;
+      --muted: #5f6777;
+      --rule: #dcd8ce;
+      --accent: #b86e00;
+      --accent-ink: #ffffff;
+    }
   }
   * { box-sizing: border-box; }
   html, body { margin: 0; padding: 0; }
@@ -22,125 +35,264 @@
     background: var(--bg);
     color: var(--text);
     font-family: "Hind Siliguri", system-ui, sans-serif;
+    font-size: 16px;
     line-height: 1.6;
     min-height: 100vh;
   }
-  .wrap { max-width: 720px; margin: 0 auto; padding: 24px 18px 64px; }
-  header { display: flex; justify-content: space-between; align-items: flex-end; gap: 12px; flex-wrap: wrap; padding-bottom: 18px; border-bottom: 1px solid var(--line); }
-  h1 { margin: 0; font-size: 1.9rem; font-weight: 700; letter-spacing: -0.01em; }
-  h1 span { color: var(--accent); }
-  .updated { color: var(--muted); font-size: 0.85rem; margin-top: 4px; }
+  .wrap { max-width: 720px; margin: 0 auto; padding: 28px 20px 32px; }
+
+  /* Masthead */
+  header { border-bottom: 3px double var(--rule); padding-bottom: 16px; }
+  .masthead-top { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; flex-wrap: wrap; }
+  h1 {
+    margin: 0;
+    font-family: "Noto Serif Bengali", Georgia, serif;
+    font-size: 2.1rem;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    line-height: 1.15;
+  }
+  h1 em { font-style: normal; color: var(--accent); }
+  .updated { color: var(--muted); font-size: 0.85rem; margin-top: 6px; }
+
+  .lang { display: flex; gap: 6px; }
   .lang button {
     background: none;
-    border: 1px solid var(--line);
+    border: 1px solid var(--rule);
     color: var(--muted);
     padding: 6px 12px;
-    border-radius: 6px;
+    border-radius: 999px;
     cursor: pointer;
     font: inherit;
-    font-size: 0.9rem;
+    font-size: 0.88rem;
+    transition: background 0.2s, color 0.2s;
   }
-  .lang button.active { color: var(--bg); background: var(--accent); border-color: var(--accent); }
-  .search { margin: 20px 0 8px; }
+  .lang button.active { color: var(--accent-ink); background: var(--accent); border-color: var(--accent); }
+
+  /* Search + filter */
+  .tools { margin: 20px 0 6px; display: grid; gap: 12px; }
   .search input {
     width: 100%;
-    padding: 12px 14px;
+    padding: 12px 16px;
     background: var(--surface);
-    border: 1px solid var(--line);
-    border-radius: 8px;
+    border: 1px solid var(--rule);
+    border-radius: 10px;
     color: var(--text);
     font: inherit;
     font-size: 1rem;
   }
   .search input:focus { outline: 2px solid var(--accent); outline-offset: 1px; }
-  .status { color: var(--muted); padding: 24px 0; text-align: center; }
-  article { padding: 18px 0; border-bottom: 1px solid var(--line); }
-  .meta { color: var(--muted); font-size: 0.82rem; margin-bottom: 4px; }
+  .chips { display: flex; gap: 8px; flex-wrap: wrap; }
+  .chip {
+    background: none;
+    border: 1px solid var(--rule);
+    color: var(--muted);
+    padding: 5px 12px;
+    border-radius: 999px;
+    cursor: pointer;
+    font: inherit;
+    font-size: 0.85rem;
+  }
+  .chip.active { color: var(--text); border-color: var(--text); }
+
+  /* Day groups */
+  .day { margin-top: 28px; }
+  .day-title {
+    font-family: "Noto Serif Bengali", Georgia, serif;
+    font-size: 1.05rem;
+    font-weight: 600;
+    color: var(--muted);
+    margin: 0 0 4px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--rule);
+  }
+
+  /* Stories */
+  article { padding: 18px 0; border-bottom: 1px solid var(--rule); }
+  article:last-child { border-bottom: 0; }
+  .meta { color: var(--muted); font-size: 0.82rem; margin-bottom: 6px; display: flex; gap: 6px; flex-wrap: wrap; align-items: center; }
   .meta .source { color: var(--accent); font-weight: 600; }
   article h2 { margin: 0 0 6px; font-size: 1.12rem; font-weight: 600; line-height: 1.4; }
   article h2 a { color: var(--text); text-decoration: none; }
   article h2 a:hover, article h2 a:focus-visible { text-decoration: underline; text-underline-offset: 3px; outline: none; }
-  article p { margin: 0; color: var(--muted); font-size: 0.95rem; }
-  footer { margin-top: 36px; color: var(--muted); font-size: 0.82rem; text-align: center; }
+  article p { margin: 0 0 10px; color: var(--muted); font-size: 0.95rem; }
+  .share {
+    background: none;
+    border: 0;
+    color: var(--muted);
+    padding: 0;
+    cursor: pointer;
+    font: inherit;
+    font-size: 0.85rem;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+
+  /* Featured story */
+  .featured h2 { font-family: "Noto Serif Bengali", Georgia, serif; font-size: 1.55rem; line-height: 1.3; margin-bottom: 10px; }
+  .featured p { font-size: 1.02rem; }
+
+  .status { color: var(--muted); padding: 32px 0; text-align: center; }
+
+  footer { margin-top: 40px; padding-top: 18px; border-top: 3px double var(--rule); color: var(--muted); font-size: 0.85rem; text-align: center; }
+  footer .credit { margin-top: 6px; color: var(--text); }
+
   @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
 </style>
 </head>
 <body>
 <div class="wrap">
   <header>
-    <div>
-      <h1>Tech <span>News</span></h1>
-      <div class="updated" id="updated"></div>
-    </div>
-    <div class="lang" role="group" aria-label="Language">
-      <button type="button" data-lang="bn" class="active">বাংলা</button>
-      <button type="button" data-lang="en">English</button>
+    <div class="masthead-top">
+      <div>
+        <h1>Tech <em>News</em></h1>
+        <div class="updated" id="updated"></div>
+      </div>
+      <div class="lang" role="group" aria-label="Language">
+        <button type="button" data-lang="bn" class="active">বাংলা</button>
+        <button type="button" data-lang="en">English</button>
+      </div>
     </div>
   </header>
 
-  <div class="search">
-    <input type="search" id="q" aria-label="Search">
+  <div class="tools">
+    <div class="search">
+      <input type="search" id="q" aria-label="Search">
+    </div>
+    <div class="chips" id="chips"></div>
   </div>
 
   <main id="list"></main>
-  <footer id="foot"></footer>
+
+  <footer>
+    <div id="foot"></div>
+    <div class="credit" id="credit"></div>
+  </footer>
 </div>
 
 <script>
   const T = {
     bn: {
-      title: "Tech খবর",
       search: "শিরোনাম বা সোর্স খুঁজুন...",
+      all: "সব",
       updated: "সর্বশেষ আপডেট",
+      today: "আজ",
+      yesterday: "গতকাল",
       empty: "কোনো খবর পাওয়া যায়নি।",
       loading: "লোড হচ্ছে...",
       error: "খবর লোড করা যায়নি। পরে আবার চেষ্টা করুন।",
+      share: "শেয়ার করুন",
+      copied: "লিংক কপি হয়েছে",
       foot: "প্রতিটি খবরের জন্য মূল সোর্সের লিংক দেওয়া আছে। পুরো লেখা এখানে কপি করা হয় না।",
+      credit: "তৈরি করেছেন: Imran · Created by Imran",
       locale: "bn-BD",
     },
     en: {
-      title: "Tech News",
       search: "Search headlines or sources...",
+      all: "All",
       updated: "Last updated",
+      today: "Today",
+      yesterday: "Yesterday",
       empty: "No news found.",
       loading: "Loading...",
       error: "Could not load news. Please try again later.",
+      share: "Share",
+      copied: "Link copied",
       foot: "Each story links to its original source. Full articles are not copied here.",
+      credit: "Created by Imran · তৈরি করেছেন: Imran",
       locale: "en-US",
     },
   };
 
   let lang = localStorage.getItem("lang") || "bn";
   let items = [];
+  let activeSource = "all";
   const $ = (id) => document.getElementById(id);
 
-  function fmtDate(value) {
+  function fmtTime(value) {
     const d = new Date(value);
     if (isNaN(d)) return "";
-    return d.toLocaleString(T[lang].locale, { dateStyle: "medium", timeStyle: "short" });
+    return d.toLocaleString(T[lang].locale, { hour: "numeric", minute: "2-digit" });
+  }
+
+  function dayLabel(value) {
+    const d = new Date(value);
+    if (isNaN(d)) return "";
+    const now = new Date();
+    const yest = new Date();
+    yest.setDate(now.getDate() - 1);
+    if (d.toDateString() === now.toDateString()) return T[lang].today;
+    if (d.toDateString() === yest.toDateString()) return T[lang].yesterday;
+    return d.toLocaleDateString(T[lang].locale, { day: "numeric", month: "long", year: "numeric" });
   }
 
   function applyLang() {
     document.documentElement.lang = lang;
-    document.title = T[lang].title + " · Tech News";
+    document.title = (lang === "bn" ? "Tech খবর" : "Tech News") + " · Tech News";
     $("q").placeholder = T[lang].search;
     $("foot").textContent = T[lang].foot;
+    $("credit").textContent = T[lang].credit;
     document.querySelectorAll(".lang button").forEach((b) => {
       b.classList.toggle("active", b.dataset.lang === lang);
     });
+    buildChips();
     render();
+  }
+
+  function buildChips() {
+    const wrap = $("chips");
+    const sources = [...new Set(items.map((i) => i.source).filter(Boolean))];
+    wrap.innerHTML = "";
+    const all = [["all", T[lang].all], ...sources.map((s) => [s, s])];
+    for (const [key, label] of all) {
+      const b = document.createElement("button");
+      b.type = "button";
+      b.className = "chip" + (activeSource === key ? " active" : "");
+      b.textContent = label;
+      b.addEventListener("click", () => {
+        activeSource = key;
+        buildChips();
+        render();
+      });
+      wrap.appendChild(b);
+    }
+  }
+
+  function makeShare(it) {
+    const btn = document.createElement("button");
+    btn.type = "button";
+    btn.className = "share";
+    btn.textContent = T[lang].share;
+    btn.addEventListener("click", async () => {
+      try {
+        if (navigator.share) {
+          await navigator.share({ title: it.title, url: it.link });
+        } else {
+          await navigator.clipboard.writeText(it.link);
+          btn.textContent = T[lang].copied;
+          setTimeout(() => (btn.textContent = T[lang].share), 1600);
+        }
+      } catch (e) {
+        /* user cancelled */
+      }
+    });
+    return btn;
   }
 
   function render() {
     const query = $("q").value.trim().toLowerCase();
     const list = $("list");
-    const shown = items.filter((it) =>
-      !query ||
-      (it.title || "").toLowerCase().includes(query) ||
-      (it.source || "").toLowerCase().includes(query)
-    );
-
     list.innerHTML = "";
+
+    const shown = items.filter((it) => {
+      const okSource = activeSource === "all" || it.source === activeSource;
+      const okQuery =
+        !query ||
+        (it.title || "").toLowerCase().includes(query) ||
+        (it.source || "").toLowerCase().includes(query);
+      return okSource && okQuery;
+    });
+
     if (!shown.length) {
       const p = document.createElement("div");
       p.className = "status";
@@ -149,31 +301,55 @@
       return;
     }
 
+    // Din onujayi group
+    const groups = new Map();
     for (const it of shown) {
-      const art = document.createElement("article");
+      const label = dayLabel(it.date);
+      if (!groups.has(label)) groups.set(label, []);
+      groups.get(label).push(it);
+    }
 
-      const meta = document.createElement("div");
-      meta.className = "meta";
-      const src = document.createElement("span");
-      src.className = "source";
-      src.textContent = it.source || "";
-      meta.append(src, " · ", fmtDate(it.date));
+    let first = true;
+    for (const [label, arr] of groups) {
+      const section = document.createElement("section");
+      section.className = "day";
 
-      const h = document.createElement("h2");
-      const a = document.createElement("a");
-      a.href = it.link;
-      a.target = "_blank";
-      a.rel = "noopener noreferrer";
-      a.textContent = it.title || "";
-      h.appendChild(a);
+      const title = document.createElement("h3");
+      title.className = "day-title";
+      title.textContent = label;
+      section.appendChild(title);
 
-      art.append(meta, h);
-      if (it.summary) {
-        const p = document.createElement("p");
-        p.textContent = it.summary;
-        art.appendChild(p);
-      }
-      list.appendChild(art);
+      arr.forEach((it) => {
+        const art = document.createElement("article");
+        if (first) art.classList.add("featured");
+        first = false;
+
+        const meta = document.createElement("div");
+        meta.className = "meta";
+        const src = document.createElement("span");
+        src.className = "source";
+        src.textContent = it.source || "";
+        meta.append(src, "·", fmtTime(it.date));
+
+        const h = document.createElement("h2");
+        const a = document.createElement("a");
+        a.href = it.link;
+        a.target = "_blank";
+        a.rel = "noopener noreferrer";
+        a.textContent = it.title || "";
+        h.appendChild(a);
+
+        art.append(meta, h);
+        if (it.summary) {
+          const p = document.createElement("p");
+          p.textContent = it.summary;
+          art.appendChild(p);
+        }
+        art.appendChild(makeShare(it));
+        section.appendChild(art);
+      });
+
+      list.appendChild(section);
     }
   }
 
@@ -184,8 +360,9 @@
       if (!res.ok) throw new Error("HTTP " + res.status);
       items = await res.json();
       $("updated").textContent = items.length
-        ? `${T[lang].updated}: ${fmtDate(new Date().toISOString())}`
+        ? `${T[lang].updated}: ${new Date().toLocaleString(T[lang].locale, { dateStyle: "medium", timeStyle: "short" })}`
         : "";
+      buildChips();
       render();
     } catch (e) {
       $("list").innerHTML = `<div class="status">${T[lang].error}</div>`;
