@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Tech News · Tech Khobor</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #16181d;
+    --surface: #1d2027;
+    --text: #e8e6e1;
+    --muted: #8a8f99;
+    --line: #2a2e37;
+    --accent: #f2b84b;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: "Hind Siliguri", system-ui, sans-serif;
+    line-height: 1.6;
+    min-height: 100vh;
+  }
+  .wrap { max-width: 720px; margin: 0 auto; padding: 24px 18px 64px; }
+  header { display: flex; justify-content: space-between; align-items: flex-end; gap: 12px; flex-wrap: wrap; padding-bottom: 18px; border-bottom: 1px solid var(--line); }
+  h1 { margin: 0; font-size: 1.9rem; font-weight: 700; letter-spacing: -0.01em; }
+  h1 span { color: var(--accent); }
+  .updated { color: var(--muted); font-size: 0.85rem; margin-top: 4px; }
+  .lang button {
+    background: none;
+    border: 1px solid var(--line);
+    color: var(--muted);
+    padding: 6px 12px;
+    border-radius: 6px;
+    cursor: pointer;
+    font: inherit;
+    font-size: 0.9rem;
+  }
+  .lang button.active { color: var(--bg); background: var(--accent); border-color: var(--accent); }
+  .search { margin: 20px 0 8px; }
+  .search input {
+    width: 100%;
+    padding: 12px 14px;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    color: var(--text);
+    font: inherit;
+    font-size: 1rem;
+  }
+  .search input:focus { outline: 2px solid var(--accent); outline-offset: 1px; }
+  .status { color: var(--muted); padding: 24px 0; text-align: center; }
+  article { padding: 18px 0; border-bottom: 1px solid var(--line); }
+  .meta { color: var(--muted); font-size: 0.82rem; margin-bottom: 4px; }
+  .meta .source { color: var(--accent); font-weight: 600; }
+  article h2 { margin: 0 0 6px; font-size: 1.12rem; font-weight: 600; line-height: 1.4; }
+  article h2 a { color: var(--text); text-decoration: none; }
+  article h2 a:hover, article h2 a:focus-visible { text-decoration: underline; text-underline-offset: 3px; outline: none; }
+  article p { margin: 0; color: var(--muted); font-size: 0.95rem; }
+  footer { margin-top: 36px; color: var(--muted); font-size: 0.82rem; text-align: center; }
+  @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div>
+      <h1>Tech <span>News</span></h1>
+      <div class="updated" id="updated"></div>
+    </div>
+    <div class="lang" role="group" aria-label="Language">
+      <button type="button" data-lang="bn" class="active">বাংলা</button>
+      <button type="button" data-lang="en">English</button>
+    </div>
+  </header>
+
+  <div class="search">
+    <input type="search" id="q" aria-label="Search">
+  </div>
+
+  <main id="list"></main>
+  <footer id="foot"></footer>
+</div>
+
+<script>
+  const T = {
+    bn: {
+      title: "Tech খবর",
+      search: "শিরোনাম বা সোর্স খুঁজুন...",
+      updated: "সর্বশেষ আপডেট",
+      empty: "কোনো খবর পাওয়া যায়নি।",
+      loading: "লোড হচ্ছে...",
+      error: "খবর লোড করা যায়নি। পরে আবার চেষ্টা করুন।",
+      foot: "প্রতিটি খবরের জন্য মূল সোর্সের লিংক দেওয়া আছে। পুরো লেখা এখানে কপি করা হয় না।",
+      locale: "bn-BD",
+    },
+    en: {
+      title: "Tech News",
+      search: "Search headlines or sources...",
+      updated: "Last updated",
+      empty: "No news found.",
+      loading: "Loading...",
+      error: "Could not load news. Please try again later.",
+      foot: "Each story links to its original source. Full articles are not copied here.",
+      locale: "en-US",
+    },
+  };
+
+  let lang = localStorage.getItem("lang") || "bn";
+  let items = [];
+  const $ = (id) => document.getElementById(id);
+
+  function fmtDate(value) {
+    const d = new Date(value);
+    if (isNaN(d)) return "";
+    return d.toLocaleString(T[lang].locale, { dateStyle: "medium", timeStyle: "short" });
+  }
+
+  function applyLang() {
+    document.documentElement.lang = lang;
+    document.title = T[lang].title + " · Tech News";
+    $("q").placeholder = T[lang].search;
+    $("foot").textContent = T[lang].foot;
+    document.querySelectorAll(".lang button").forEach((b) => {
+      b.classList.toggle("active", b.dataset.lang === lang);
+    });
+    render();
+  }
+
+  function render() {
+    const query = $("q").value.trim().toLowerCase();
+    const list = $("list");
+    const shown = items.filter((it) =>
+      !query ||
+      (it.title || "").toLowerCase().includes(query) ||
+      (it.source || "").toLowerCase().includes(query)
+    );
+
+    list.innerHTML = "";
+    if (!shown.length) {
+      const p = document.createElement("div");
+      p.className = "status";
+      p.textContent = T[lang].empty;
+      list.appendChild(p);
+      return;
+    }
+
+    for (const it of shown) {
+      const art = document.createElement("article");
+
+      const meta = document.createElement("div");
+      meta.className = "meta";
+      const src = document.createElement("span");
+      src.className = "source";
+      src.textContent = it.source || "";
+      meta.append(src, " · ", fmtDate(it.date));
+
+      const h = document.createElement("h2");
+      const a = document.createElement("a");
+      a.href = it.link;
+      a.target = "_blank";
+      a.rel = "noopener noreferrer";
+      a.textContent = it.title || "";
+      h.appendChild(a);
+
+      art.append(meta, h);
+      if (it.summary) {
+        const p = document.createElement("p");
+        p.textContent = it.summary;
+        art.appendChild(p);
+      }
+      list.appendChild(art);
+    }
+  }
+
+  async function load() {
+    $("list").innerHTML = `<div class="status">${T[lang].loading}</div>`;
+    try {
+      const res = await fetch("news.json", { cache: "no-cache" });
+      if (!res.ok) throw new Error("HTTP " + res.status);
+      items = await res.json();
+      $("updated").textContent = items.length
+        ? `${T[lang].updated}: ${fmtDate(new Date().toISOString())}`
+        : "";
+      render();
+    } catch (e) {
+      $("list").innerHTML = `<div class="status">${T[lang].error}</div>`;
+    }
+  }
+
+  document.querySelectorAll(".lang button").forEach((b) => {
+    b.addEventListener("click", () => {
+      lang = b.dataset.lang;
+      localStorage.setItem("lang", lang);
+      applyLang();
+    });
+  });
+  $("q").addEventListener("input", render);
+
+  applyLang();
+  load();
+</script>
+</body>
+</html>
